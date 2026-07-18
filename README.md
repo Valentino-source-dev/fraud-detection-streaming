@@ -46,6 +46,42 @@ flowchart TB
     style GRAF fill:#99ff99,stroke:#333,stroke-width:2px
 ```
 
+### 🔁 MLOps Lifecycle
+
+In addition to data flow, the system enforces a strict MLOps lifecycle dividing offline experimentation, governance, and online inference:
+
+```mermaid
+flowchart TD
+    subgraph "1. Experimentation & Training (Offline)"
+        A[Raw CSV Data] --> B[Optuna Hyperparameter Tuning]
+        B --> C[Model Evaluation & Metrics]
+        C -->|Log Run & Artifacts| D[MLflow Tracking Server]
+    end
+
+    subgraph "2. Model Governance & Registry"
+        D -->|Register Best Candidate| E[MLflow Model Registry]
+        E -->|Promote to Production| F(Assign Alias: @production)
+    end
+
+    subgraph "3. Real-Time Serving (Online)"
+        F -->|Hot-Load @production| G[Stream Consumer]
+        H[Live Transaction Stream] --> G
+        G -->|XGBoost Prediction| I[Database / Dashboard]
+    end
+
+    subgraph "4. Feedback & Monitoring Loop"
+        G -->|Export Latency & Score Metrics| J[Prometheus / Grafana]
+        J -->|Performance Drift Alert| K[Retrigger Training Pipeline]
+        K -.->|Automated Run| B
+    end
+
+    style D fill:#ffb366,stroke:#333,stroke-width:1px
+    style E fill:#ffb366,stroke:#333,stroke-width:2px
+    style F fill:#ff9999,stroke:#333,stroke-width:2px
+    style G fill:#66ccff,stroke:#333,stroke-width:2px
+    style J fill:#99ff99,stroke:#333,stroke-width:1px
+```
+
 ---
 
 ## ✨ Key Features
