@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+
+# Data - user downloads manually
+data/*.csv
+data/*.zip
+
+# MLflow artifacts
+mlruns/
+mlartifacts/
+
+# Docker volumes
+postgres_data/
+grafana_data/
+redpanda_data/
+mlflow_data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Models (tracked by MLflow, not git)
+*.pkl
+*.joblib
+*.xgb
