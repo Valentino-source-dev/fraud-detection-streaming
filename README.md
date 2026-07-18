@@ -141,6 +141,11 @@ cd training && python3 train.py
 ```
 *The winning model will be saved on MLflow and automatically promoted with the `@production` alias.*
 
+> [!NOTE]
+> **Why is there no model file in the repository?**
+> Committing large model binary files (such as `.pkl`, `.bin`, or `.json`) directly to a Git repository is an MLOps anti-pattern. This project separates **code versioning** (managed via Git) from **model versioning** (managed via the MLflow Model Registry). The `consumer` fetches the model dynamically at startup or run-time using the MLflow API. This ensures the repository remains lightweight, code and models are decoupled, and models can be hot-swapped dynamically without redeploying code.
+
+
 ### 4. Start Streaming Pipeline
 ```bash
 # Return to the main folder
