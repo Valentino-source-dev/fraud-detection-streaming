@@ -40,10 +40,10 @@ flowchart TB
         PROM -->|Visualize live data| GRAF[Grafana Dashboard]
     end
 
-    style RP fill:#f96,stroke:#333,stroke-width:2px
-    style MLFLOW fill:#ffb366,stroke:#333,stroke-width:2px
-    style XGB fill:#66ccff,stroke:#333,stroke-width:2px
-    style GRAF fill:#99ff99,stroke:#333,stroke-width:2px
+    style RP fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    style MLFLOW fill:#ffb366,stroke:#333,stroke-width:2px,color:#000
+    style XGB fill:#66ccff,stroke:#333,stroke-width:2px,color:#000
+    style GRAF fill:#99ff99,stroke:#333,stroke-width:2px,color:#000
 ```
 
 ### 🔁 MLOps Lifecycle
@@ -75,11 +75,11 @@ flowchart TD
         K -.->|Automated Run| B
     end
 
-    style D fill:#ffb366,stroke:#333,stroke-width:1px
-    style E fill:#ffb366,stroke:#333,stroke-width:2px
-    style F fill:#ff9999,stroke:#333,stroke-width:2px
-    style G fill:#66ccff,stroke:#333,stroke-width:2px
-    style J fill:#99ff99,stroke:#333,stroke-width:1px
+    style D fill:#ffb366,stroke:#333,stroke-width:1px,color:#000
+    style E fill:#ffb366,stroke:#333,stroke-width:2px,color:#000
+    style F fill:#ff9999,stroke:#333,stroke-width:2px,color:#000
+    style G fill:#66ccff,stroke:#333,stroke-width:2px,color:#000
+    style J fill:#99ff99,stroke:#333,stroke-width:1px,color:#000
 ```
 
 ---
