@@ -82,6 +82,14 @@ flowchart TD
     style J fill:#99ff99,stroke:#333,stroke-width:1px,color:#000
 ```
 
+#### 🔄 The Retraining Feedback Loop (Handling Concept Drift)
+
+In real-world credit card fraud detection, fraudulent patterns shift constantly (known as **Concept Drift**). To maintain high precision and recall over time, the system is designed with an asynchronous feedback loop:
+1. **Continuous Monitoring**: **Prometheus** and **Grafana** track real-time model serving statistics, latency distributions, and the ratio of flagged anomalies.
+2. **Drift Detection**: If the distribution of live features or prediction scores shifts significantly beyond established thresholds, a drift/performance alert is triggered.
+3. **Automated Retraining**: The alert triggers the training pipeline. A new optimization run is launched where **Optuna** performs hyperparameter tuning on newly ingested, labeled historical data stored in **PostgreSQL**.
+4. **Zero-Downtime Deployment**: The newly trained model is evaluated and registered in **MLflow**. Once verified, it is assigned the `@production` alias, and the **Stream Consumer** hot-loads it instantly with zero downtime.
+
 ---
 
 ## ✨ Key Features
