@@ -19,22 +19,22 @@ The infrastructure is fully containerized and structured as a continuous feedbac
 
 ```mermaid
 flowchart TB
-    subgraph Data Generation
+    subgraph "Data Generation"
         CSV[(creditcard.csv)] -->|Replay at 10x| GEN[Generator Container]
     end
 
-    subgraph Streaming & Message Queue
+    subgraph "Streaming & Message Queue"
         GEN -->|Publish JSON events| RP{Redpanda / Kafka}
     end
 
-    subgraph Real-Time Inference (MLOps)
+    subgraph "Real-Time Inference (MLOps)"
         RP -->|Consume events| CONS[Stream Consumer]
         MLFLOW[(MLflow Registry)] -->|Load @production Model| CONS
         CONS -->|Engineered Features| XGB[XGBoost Model]
         XGB -->|Predict Fraud Score| CONS
     end
 
-    subgraph Storage & Observability
+    subgraph "Storage & Observability"
         CONS -->|Batch insert predictions| DB[(PostgreSQL)]
         CONS -->|Expose metrics| PROM[Prometheus]
         PROM -->|Visualize live data| GRAF[Grafana Dashboard]
