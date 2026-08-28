@@ -1,52 +1,46 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-dist/
-build/
-.eggs/
-*.egg
-
-# Virtual environments
-.venv/
-venv/
-env/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Environment
-.env
 
 # Data - user downloads manually
+# Docker volumes
+# Environment
+# IDE
+# MLflow artifacts
+# Models (tracked by MLflow, not git)
+# OS
+# Python
+# Test / Coverage
+# Virtual environments
+*$py.class
+*.DS_Store
+*.egg
+*.egg-info/
+*.joblib
+*.pkl
+*.py[cod]
+*.swo
+*.swp
+*.xgb
+*~
+.DS_Store
+.coverage
+.eggs/
+.env
+.idea/
+.pytest_cache/
+.venv/
+.vscode/
+Macintosh HD
+Thumbs.db
+__pycache__/
+build/
 data/*.csv
 data/*.zip
-
-# MLflow artifacts
-mlruns/
-mlartifacts/
-
-# Docker volumes
-postgres_data/
+dist/
+env/
 grafana_data/
-redpanda_data/
-mlflow_data/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Test / Coverage
-.coverage
 htmlcov/
-.pytest_cache/
-
-# Models (tracked by MLflow, not git)
-*.pkl
-*.joblib
-*.xgb
+mlartifacts/
+mlflow_data/
+mlruns/
+postgres_data/
+redpanda_data/
+venv/
