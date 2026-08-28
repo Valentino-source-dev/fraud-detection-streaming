@@ -2,7 +2,6 @@
 
 import os
 
-
 KAFKA_BROKER: str = os.getenv("KAFKA_BROKER", "localhost:19092")
 KAFKA_TOPIC: str = os.getenv("KAFKA_TOPIC", "transactions")
 CONSUMER_GROUP: str = os.getenv("CONSUMER_GROUP", "fraud-detector")

@@ -10,12 +10,10 @@ This is realistic enough to demonstrate stateful feature engineering.
 
 from __future__ import annotations
 
-import time
 from collections import defaultdict, deque
 from typing import Any
 
 import numpy as np
-
 
 # Maximum history length per card (bounded memory)
 _MAX_HISTORY = 200
@@ -26,12 +24,8 @@ class FeatureEngineer:
 
     def __init__(self) -> None:
         # Per-card state: amount history, timestamps
-        self._amounts: dict[str, deque[float]] = defaultdict(
-            lambda: deque(maxlen=_MAX_HISTORY)
-        )
-        self._timestamps: dict[str, deque[float]] = defaultdict(
-            lambda: deque(maxlen=_MAX_HISTORY)
-        )
+        self._amounts: dict[str, deque[float]] = defaultdict(lambda: deque(maxlen=_MAX_HISTORY))
+        self._timestamps: dict[str, deque[float]] = defaultdict(lambda: deque(maxlen=_MAX_HISTORY))
 
     @staticmethod
     def _assign_card_id(event: dict[str, Any]) -> str:

@@ -12,10 +12,9 @@ import sys
 import time
 from datetime import datetime, timezone
 
-import pandas as pd
-from confluent_kafka import Producer, KafkaError
-
 import generator_config as config
+import pandas as pd
+from confluent_kafka import KafkaError, Producer
 
 logging.basicConfig(
     level=logging.INFO,
@@ -46,12 +45,14 @@ def _wait_for_broker(broker: str, max_retries: int = 30, delay: float = 2.0) -> 
     """Block until the Kafka broker is reachable, then return a Producer."""
     for attempt in range(1, max_retries + 1):
         try:
-            producer = Producer({
-                "bootstrap.servers": broker,
-                "linger.ms": 50,
-                "batch.num.messages": config.BATCH_SIZE,
-                "queue.buffering.max.messages": 100_000,
-            })
+            producer = Producer(
+                {
+                    "bootstrap.servers": broker,
+                    "linger.ms": 50,
+                    "batch.num.messages": config.BATCH_SIZE,
+                    "queue.buffering.max.messages": 100_000,
+                }
+            )
             # Trigger metadata fetch to verify connectivity
             metadata = producer.list_topics(timeout=5)
             log.info(

@@ -16,12 +16,14 @@ from __future__ import annotations
 import logging
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import mlflow
-import numpy as np
 import pandas as pd
 import shap
+import training_config as config
+from features import get_feature_matrix
 from sklearn.metrics import (
     ConfusionMatrixDisplay,
     PrecisionRecallDisplay,
@@ -34,9 +36,6 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 
-import training_config as config
-from features import get_feature_matrix
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("evaluate")
 
@@ -46,7 +45,8 @@ def main() -> None:
     raw = pd.read_csv(config.DATA_PATH)
     X, y = get_feature_matrix(raw)
     _, X_test, _, y_test = train_test_split(
-        X, y,
+        X,
+        y,
         test_size=config.TEST_SIZE,
         random_state=config.RANDOM_SEED,
         stratify=y,
@@ -86,7 +86,8 @@ def main() -> None:
         # Confusion matrix
         fig_cm, ax_cm = plt.subplots(figsize=(6, 5))
         ConfusionMatrixDisplay.from_predictions(
-            y_test, y_pred,
+            y_test,
+            y_pred,
             display_labels=["Legit", "Fraud"],
             cmap="Blues",
             ax=ax_cm,
@@ -99,7 +100,8 @@ def main() -> None:
         # Precision-Recall curve
         fig_pr, ax_pr = plt.subplots(figsize=(8, 6))
         PrecisionRecallDisplay.from_predictions(
-            y_test, y_proba,
+            y_test,
+            y_proba,
             name="XGBoost",
             ax=ax_pr,
         )
@@ -119,7 +121,8 @@ def main() -> None:
 
             fig_shap, ax_shap = plt.subplots(figsize=(10, 8))
             shap.summary_plot(
-                shap_values, X_sample,
+                shap_values,
+                X_sample,
                 max_display=20,
                 show=False,
             )

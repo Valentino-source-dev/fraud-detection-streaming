@@ -10,7 +10,6 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-
 # Feature columns produced by this module (must match consumer/features.py)
 EXTRA_FEATURES = [
     "amount_zscore",
@@ -92,9 +91,7 @@ def compute_batch_features(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     # Amount relative to rolling max
-    rolling_max = grouped["Amount"].transform(
-        lambda x: x.expanding().max().shift(1)
-    )
+    rolling_max = grouped["Amount"].transform(lambda x: x.expanding().max().shift(1))
     df["amount_max_ratio"] = np.where(
         rolling_max > 0,
         df["Amount"] / rolling_max,

@@ -13,11 +13,14 @@ from __future__ import annotations
 import logging
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
 import pandas as pd
+import training_config as config
+from features import get_feature_matrix
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import (
     PrecisionRecallDisplay,
@@ -31,9 +34,6 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
-import training_config as config
-from features import get_feature_matrix
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("baseline")
 
@@ -43,7 +43,8 @@ def main() -> None:
     raw = pd.read_csv(config.DATA_PATH)
     X, y = get_feature_matrix(raw)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
+        X,
+        y,
         test_size=config.TEST_SIZE,
         random_state=config.RANDOM_SEED,
         stratify=y,
@@ -98,18 +99,21 @@ def main() -> None:
     mlflow.set_experiment(config.MLFLOW_EXPERIMENT_NAME)
 
     with mlflow.start_run(run_name="isolation-forest-baseline"):
-        mlflow.log_params({
-            "model_type": "IsolationForest",
-            "n_estimators": 200,
-            "contamination": contamination,
-            "purpose": "baseline_comparison_only",
-        })
+        mlflow.log_params(
+            {
+                "model_type": "IsolationForest",
+                "n_estimators": 200,
+                "contamination": contamination,
+                "purpose": "baseline_comparison_only",
+            }
+        )
         mlflow.log_metrics(metrics)
 
         # Precision-Recall curve
         fig, ax = plt.subplots(figsize=(8, 6))
         PrecisionRecallDisplay.from_predictions(
-            y_test, anomaly_scores,
+            y_test,
+            anomaly_scores,
             name="Isolation Forest",
             ax=ax,
         )
@@ -120,7 +124,13 @@ def main() -> None:
 
         # Score distribution
         fig2, ax2 = plt.subplots(figsize=(8, 5))
-        ax2.hist(anomaly_scores[y_test == 0], bins=50, alpha=0.6, label="Legit", color="green")
+        ax2.hist(
+            anomaly_scores[y_test == 0],
+            bins=50,
+            alpha=0.6,
+            label="Legit",
+            color="green",
+        )
         ax2.hist(anomaly_scores[y_test == 1], bins=50, alpha=0.6, label="Fraud", color="red")
         ax2.set_xlabel("Anomaly Score")
         ax2.set_ylabel("Count")

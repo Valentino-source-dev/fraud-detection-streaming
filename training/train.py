@@ -14,13 +14,14 @@ importance plot.  Registers the best model in the MLflow Model Registry.
 from __future__ import annotations
 
 import logging
-import sys
 
 import mlflow
 import mlflow.xgboost
 import numpy as np
 import optuna
 import pandas as pd
+import training_config as config
+from features import get_feature_matrix
 from sklearn.metrics import (
     average_precision_score,
     f1_score,
@@ -30,9 +31,6 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from xgboost import XGBClassifier
-
-import training_config as config
-from features import get_feature_matrix
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("train")
@@ -44,18 +42,28 @@ def _load_data() -> tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
     """Load CSV, compute features, split into train/test."""
     log.info("Loading dataset from %s ...", config.DATA_PATH)
     raw = pd.read_csv(config.DATA_PATH)
-    log.info("Raw dataset: %d rows, %d frauds (%.3f%%).",
-             len(raw), raw["Class"].sum(), raw["Class"].mean() * 100)
+    log.info(
+        "Raw dataset: %d rows, %d frauds (%.3f%%).",
+        len(raw),
+        raw["Class"].sum(),
+        raw["Class"].mean() * 100,
+    )
 
     X, y = get_feature_matrix(raw)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
+        X,
+        y,
         test_size=config.TEST_SIZE,
         random_state=config.RANDOM_SEED,
         stratify=y,
     )
-    log.info("Train: %d (%d fraud) | Test: %d (%d fraud).",
-             len(X_train), y_train.sum(), len(X_test), y_test.sum())
+    log.info(
+        "Train: %d (%d fraud) | Test: %d (%d fraud).",
+        len(X_train),
+        y_train.sum(),
+        len(X_test),
+        y_test.sum(),
+    )
     return X_train, X_test, y_train, y_test
 
 
@@ -94,7 +102,8 @@ def _objective(
             verbosity=0,
         )
         model.fit(
-            Xt, yt,
+            Xt,
+            yt,
             eval_set=[(Xv, yv)],
             verbose=False,
         )
@@ -127,7 +136,8 @@ def _train_final_model(
             verbosity=0,
         )
         model.fit(
-            X_train, y_train,
+            X_train,
+            y_train,
             eval_set=[(X_test, y_test)],
             verbose=False,
         )
@@ -164,6 +174,7 @@ def _train_final_model(
         # ── Feature importance plot ──────────────────────
         try:
             import matplotlib
+
             matplotlib.use("Agg")
             import matplotlib.pyplot as plt
 
@@ -192,7 +203,7 @@ def _train_final_model(
             if not version:
                 versions = client.search_model_versions(f"name='{config.MLFLOW_MODEL_NAME}'")
                 version = versions[0].version if versions else "1"
-            
+
             client.set_registered_model_alias(
                 name=config.MLFLOW_MODEL_NAME,
                 alias="production",
@@ -201,7 +212,6 @@ def _train_final_model(
             log.info("Model version %s assigned alias 'production'.", version)
         except Exception as exc:
             log.warning("Could not assign 'production' alias: %s", exc)
-
 
 
 def main() -> None:

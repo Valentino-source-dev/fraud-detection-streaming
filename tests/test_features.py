@@ -1,7 +1,7 @@
 """Tests for the real-time feature engineering module."""
 
-import time
 import pytest
+
 from consumer.features import FeatureEngineer
 
 
@@ -69,7 +69,7 @@ class TestFeatureEngineer:
         """tx_count_recent should count events within the last 60s of simulated time."""
         fe = FeatureEngineer()
         for i in range(10):
-            fe.compute(_make_event(time=float(i) * 2.0)) # spans 18s
+            fe.compute(_make_event(time=float(i) * 2.0))  # spans 18s
         result = fe.compute(_make_event(time=20.0))
         # All 10 prior events are within [20 - 60, 20)
         assert result["tx_count_recent"] == 10
@@ -103,26 +103,27 @@ class TestFeatureEngineer:
         """Verifica che compute_batch_features e FeatureEngineer.compute
         producano esattamente gli stessi valori per evitare skew.
         """
-        import pytest
         import pandas as pd
+        import pytest
+
         from training.features import compute_batch_features
-        
+
         # 1. Genera una sequenza coerente di eventi
         events = [
             _make_event(time=1.0, amount=10.0, V1=0.1, V2=0.2, V3=0.3, V4=0.4, V5=0.5),
             _make_event(time=5.0, amount=20.0, V1=0.1, V2=0.2, V3=0.3, V4=0.4, V5=0.5),
-            _make_event(time=12.0, amount=15.0, V1=0.1, V2=0.2, V3=0.3, V4=0.4, V5=0.5)
+            _make_event(time=12.0, amount=15.0, V1=0.1, V2=0.2, V3=0.3, V4=0.4, V5=0.5),
         ]
-        
+
         # 2. Calcola in streaming
         fe = FeatureEngineer()
         streaming_results = [fe.compute(e) for e in events]
-        
+
         df = pd.DataFrame(events)
         # Adatta i nomi colonne per uniformare Amount/amount e Time/time
         df = df.rename(columns={"amount": "Amount", "time": "Time"})
         batch_results = compute_batch_features(df)
-        
+
         # 4. Confronta i valori
         for i, st_res in enumerate(streaming_results):
             row = batch_results.iloc[i]
@@ -131,4 +132,3 @@ class TestFeatureEngineer:
             assert st_res["tx_count_recent"] == int(row["tx_count_recent"])
             assert st_res["amount_to_mean"] == pytest.approx(row["amount_to_mean"])
             assert st_res["amount_max_ratio"] == pytest.approx(row["amount_max_ratio"])
-

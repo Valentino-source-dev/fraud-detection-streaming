@@ -10,14 +10,14 @@ import logging
 import time
 from typing import Any, Protocol
 
-import numpy as np
-
 import consumer_config as config
+import numpy as np
 
 log = logging.getLogger("consumer.model_loader")
 
 
 # ── Public interface ────────────────────────────────────────────
+
 
 class Scorer(Protocol):
     """Anything that can score a feature vector."""
@@ -79,9 +79,7 @@ def load_model() -> DummyScorer | MLflowScorer:
         return scorer
 
     except Exception as exc:
-        log.warning(
-            "Could not load model from MLflow (%s). Using dummy scorer.", exc
-        )
+        log.warning("Could not load model from MLflow (%s). Using dummy scorer.", exc)
         return DummyScorer()
 
 

@@ -12,14 +12,14 @@ import signal
 import sys
 import time
 
-import numpy as np
-from confluent_kafka import Consumer, KafkaError, KafkaException, TopicPartition
-
 import consumer_config as config
 import metrics
-from db import PredictionWriter
+import numpy as np
+from confluent_kafka import Consumer, KafkaError, KafkaException, TopicPartition
 from features import FeatureEngineer
 from model_loader import ModelManager
+
+from db import PredictionWriter
 
 logging.basicConfig(
     level=logging.INFO,
@@ -63,6 +63,7 @@ def _build_feature_vector(event: dict) -> np.ndarray:
 
 
 # ── Main loop ───────────────────────────────────────────────────
+
 
 def _wait_for_broker(broker: str, max_retries: int = 30, delay: float = 2.0) -> Consumer:
     """Block until the Kafka broker is reachable, then return a Consumer."""
@@ -173,16 +174,18 @@ def run() -> None:
             metrics.model_info.info({"version": getattr(scorer, "version", "unknown")})
 
             # ── Log to PostgreSQL ──────────────────────────
-            db_writer.add({
-                "original_index": event.get("original_index"),
-                "amount": event.get("amount", 0.0),
-                "score": fraud_score,
-                "is_fraud_pred": is_fraud_pred,
-                "is_fraud_actual": bool(event.get("is_fraud", 0)),
-                "model_version": getattr(scorer, "version", "unknown"),
-                "latency_ms": latency_ms,
-                "features": {k: enriched.get(k) for k in _EXTRA_FEATURES},
-            })
+            db_writer.add(
+                {
+                    "original_index": event.get("original_index"),
+                    "amount": event.get("amount", 0.0),
+                    "score": fraud_score,
+                    "is_fraud_pred": is_fraud_pred,
+                    "is_fraud_actual": bool(event.get("is_fraud", 0)),
+                    "model_version": getattr(scorer, "version", "unknown"),
+                    "latency_ms": latency_ms,
+                    "features": {k: enriched.get(k) for k in _EXTRA_FEATURES},
+                }
+            )
 
             processed += 1
             if is_fraud_pred:

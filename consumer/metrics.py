@@ -5,7 +5,6 @@ Exposes an HTTP endpoint at /metrics for Prometheus to scrape.
 
 from prometheus_client import Counter, Gauge, Histogram, Info, start_http_server
 
-
 # ── Counters ────────────────────────────────────────────────────
 transactions_processed = Counter(
     "transactions_processed_total",

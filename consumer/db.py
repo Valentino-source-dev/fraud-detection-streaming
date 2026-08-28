@@ -11,10 +11,9 @@ import logging
 import time
 from typing import Any
 
+import consumer_config as config
 import psycopg2
 import psycopg2.extras
-
-import consumer_config as config
 
 log = logging.getLogger("consumer.db")
 
@@ -46,7 +45,11 @@ class PredictionWriter:
                 password=config.POSTGRES_PASSWORD,
             )
             self._conn.autocommit = True
-            log.info("Connected to PostgreSQL at %s:%s.", config.POSTGRES_HOST, config.POSTGRES_PORT)
+            log.info(
+                "Connected to PostgreSQL at %s:%s.",
+                config.POSTGRES_HOST,
+                config.POSTGRES_PORT,
+            )
         return self._conn
 
     def add(self, prediction: dict[str, Any]) -> None:

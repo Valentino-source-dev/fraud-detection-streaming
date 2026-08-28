@@ -1,6 +1,7 @@
 """Tests for the model loader module."""
 
 import numpy as np
+
 from consumer.model_loader import DummyScorer, ModelManager
 
 
